@@ -4,21 +4,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import springbook.user.domain.User;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import springbook.user.domain.User;
+import javax.sql.DataSource;
 public class UserDao {
 	//드라이버 연결 멤버변수를 만든다.
-	private ConnectionMaker connectionMaker;
+	private DataSource dataSource;
 	
-	UserDao(){}
+	UserDao(){
+		//의존관계 주입
+		//this.connection=connection
+		//DaoFactory클래스이용
+		//DaoFactory daoFactory=new DaoFactory();
+		//this.connection=DaoFactory.ConnectionMaker();
+		//의존관계 검색
+		/*ApplicationContext context = new AnnotationConfigApplicationContext(CountingDaoFactory.class);
+		this.connectionMaker=context.getBean("connectionMaker",ConnectionMaker.class);*/
+	}
+	
 	//원하는 드라이버를 지정하기위해 매개변수를 가져온다.
-	UserDao(ConnectionMaker connectionMaker){
-		this.connectionMaker=connectionMaker;
+	public void setDataSource(DataSource dataSource){
+		this.dataSource=dataSource;
 	}
 	
 	//데이터베이스를 불러와서 값을 입력하는 add 메소드
 	public void add(User user)throws ClassNotFoundException,SQLException{
-		Connection c=connectionMaker.makeConnection();
+		Connection c=dataSource.getConnection();
 		//데이터베이스에 질의문을 입력
 		PreparedStatement ps=c.prepareStatement("insert into users(id,name,password) value(?,?,?)");
 		//preparedStatement클래스 객체인 ps에 user id,name,password정보를 입력한다.
@@ -35,7 +48,7 @@ public class UserDao {
 	
 	public User get(String id)throws ClassNotFoundException,SQLException{
 		//커넥션 c에 UserDaoTest에서 불러오는 connectinMaker안의 makeConnection을 불러온다.
-		Connection c=connectionMaker.makeConnection();
+		Connection c=dataSource.getConnection();
 		//c데이터베이스 질의문을 rs에 입력한다.
 		PreparedStatement ps=c.prepareStatement("Select * from users where id=?");
 		//?값을 설정한다.
