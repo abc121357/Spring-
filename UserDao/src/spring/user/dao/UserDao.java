@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import springbook.user.domain.User;
 import javax.sql.DataSource;
@@ -57,19 +58,22 @@ public class UserDao {
 		//값을 읽어오기 위해 resultset을 불러온다.
 		ResultSet rs=ps.executeQuery();
 		//설정하기 위해 첫번째로이동시키고
-		rs.next();
+		
 		//값을 읽어오기 위해 데이터질의문이 저장된 rs안의 id값,name값,password값을 getString으로 불러온다.
-		User user=new User();
+		User user=null;
+		if(rs.next()) {
+		user=new User();
 		user.setId(rs.getString("id"));
 		user.setName(rs.getString("name"));
 		user.setPassword(rs.getString("password"));
+		}
 		
 		
 		//옮기고 닫고 리턴값을 반환한다.
 		rs.close();
 		ps.close();
 		c.close();
-		
+		if(user == null) throw new EmptyResultDataAccessException(1);
 		return user;
 		
 	}
