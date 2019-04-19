@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 public class UserDao {
 	//드라이버 연결 멤버변수를 만든다.
 	private DataSource dataSource;
-	
+	private ConnectionMaker connectionMaker;
 	UserDao(){
 		//의존관계 주입
 		//this.connection=connection
@@ -29,6 +29,10 @@ public class UserDao {
 	//원하는 드라이버를 지정하기위해 매개변수를 가져온다.
 	public void setDataSource(DataSource dataSource){
 		this.dataSource=dataSource;
+	}
+	
+	public void setConnectionMaker(ConnectionMaker connectionMaker) {
+		this.connectionMaker=connectionMaker;
 	}
 	
 	//데이터베이스를 불러와서 값을 입력하는 add 메소드
@@ -66,6 +70,7 @@ public class UserDao {
 		user.setId(rs.getString("id"));
 		user.setName(rs.getString("name"));
 		user.setPassword(rs.getString("password"));
+		
 		}
 		
 		

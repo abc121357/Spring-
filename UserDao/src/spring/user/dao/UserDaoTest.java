@@ -1,4 +1,5 @@
 package spring.user.dao;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.junit.Before;
@@ -10,13 +11,14 @@ import org.springframework.context.ApplicationContext;
 import java.sql.SQLException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+//스프
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/applicationContext.xml")
+@ContextConfiguration(locations="Application.xml")
 public class UserDaoTest {
 	@Autowired
 	private UserDao dao;
