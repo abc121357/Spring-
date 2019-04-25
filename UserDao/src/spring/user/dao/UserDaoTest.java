@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 //스프
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="Application.xml")
+@ContextConfiguration(locations="/applicationContext.xml")
 public class UserDaoTest {
 	@Autowired
 	private UserDao dao;
@@ -160,7 +160,7 @@ public class UserDaoTest {
 		System.out.println(user1.getId()+"등록 성공");
 		System.out.println(user2.getId()+"등록 성공");
 		
-		User user4=dao.get("Fumi");	
+		User user4=dao.get("humi");	
 		System.out.println(user4.getName());
 		System.out.println(user4.getPassword());
 		System.out.println(user4.getId()+"조회 성공");

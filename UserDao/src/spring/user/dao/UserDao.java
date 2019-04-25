@@ -85,16 +85,38 @@ public class UserDao {
 	
 	public void deleteAll()throws SQLException,ClassNotFoundException{
 	//데이터베이스에 연결한다.
-		Connection c=dataSource.getConnection();
-	//ps에 "Delete from users"를 입력해서 삭제질의를 넘긴다.
-		PreparedStatement ps=c.prepareStatement("delete from users");
+		//빈 초기값을 먼저 설정해서 제대로 값에 들어오지 않았을시에 close를 실행하지않는다.
+		//예외처리
+		Connection c=null;
+		PreparedStatement ps=null;
+		try {
+		c=dataSource.getConnection();
+		//ps에 "Delete from users"를 입력해서 삭제질의를 넘긴다.
+		ps=c.prepareStatement("delete from users");
 		// 데이터베이스를 업데이트한다.
 		ps.executeUpdate();
-		//사용이 끝났으니 두개다 닫기
-		ps.close();
-		c.close();
-		
-		
+		}catch(SQLException e) {
+			throw e;
+		}finally {
+			if(ps!=null) {
+				try {
+					ps.close();
+					
+				}catch(SQLException e)
+				{
+					
+				}
+			}
+			if(c !=null) {
+				try {
+					c.close();
+					
+				}catch(SQLException e)
+				{
+					
+				}
+			}
+		}
 	}
 	
 	
