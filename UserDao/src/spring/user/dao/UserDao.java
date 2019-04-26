@@ -87,18 +87,25 @@ public class UserDao {
 	//데이터베이스에 연결한다.
 		//빈 초기값을 먼저 설정해서 제대로 값에 들어오지 않았을시에 close를 실행하지않는다.
 		//예외처리
+		StatementStrategy strategy=new DeleteAllStatement();
 		Connection c=null;
 		PreparedStatement ps=null;
 		try {
 		c=dataSource.getConnection();
 		//ps에 "Delete from users"를 입력해서 삭제질의를 넘긴다.
-		ps=c.prepareStatement("delete from users");
+		ps=strategy.makeStatement(c);
 		// 데이터베이스를 업데이트한다.
 		ps.executeUpdate();
+		//예외가 발생하면
 		}catch(SQLException e) {
+			//sql예외를 던진다
 			throw e;
+			//마지막으로
 		}finally {
+			//ps객체가 비어있지않을 경우
 			if(ps!=null) {
+				//ps를 닫는데
+				//여기서도 예외가 날 수 있으므로 예외처리를한다.
 				try {
 					ps.close();
 					
@@ -107,7 +114,9 @@ public class UserDao {
 					
 				}
 			}
+			//c객체가 비어있지 않을 경우
 			if(c !=null) {
+				//예외처리하고 닫는다.
 				try {
 					c.close();
 					
@@ -122,18 +131,46 @@ public class UserDao {
 	
 	
 	public int getCount()throws SQLException{
+		Connection c=null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		
 		//데이터베이스를 연결한다.
-		Connection c=dataSource.getConnection();
+		try{
+			c=dataSource.getConnection();
+		
 		//PreparedStatement에 쿼리문을 작성한다.
-		PreparedStatement ps=c.prepareStatement("select count(*) from users");
+		ps=c.prepareStatement("select count(*) from users");
 		//읽어오기 위해서 RsultSet에 데이터베이스 내용을 넣는다.
-		ResultSet rs=ps.executeQuery();
+		rs=ps.executeQuery();
 		rs.next();
-		int count=rs.getInt(1);
-		
-		return count;
-		
-	}
+		return rs.getInt(1);
+		}catch(SQLException e){
+			throw e;
+		}finally {
+			if(rs!=null) {
+				try {
+					rs.close();
+				}catch(SQLException e){
+					throw e;
+				}
+			}
+			if(ps!=null) {
+				try {
+					ps.close();
+				}catch(SQLException e) {
+					throw e;
+				}
+			}
+			if(c !=null) {
+				try {
+					c.close();
+				}catch(SQLException e) {
+					throw e;
+					}
+			}
+				}
+		}
 	
 	
 		
