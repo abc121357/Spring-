@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import java.sql.SQLException;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import springbook.user.domain.User;
@@ -25,6 +27,7 @@ public class UserDaoTest {
 	private User user;
 	private User user1;
 	private User user2;
+	private User user3;
 	/*public void main2() throws ClassNotFoundException, SQLException{
 		//메인에서 ConnectionMaker 객체를 만들어서 UserDao에 넘겨준다.
 		//생성자에서 ConnectionMaker파라미터를 받을 수 있게 UserDao에서 UserDao자신 멤버변수에 생성자를 실행했다. 그러므로 메인에서 드라이버를 지정가능하다. -1
@@ -85,7 +88,7 @@ public class UserDaoTest {
 		//xml파일 설정해서 루트를 지정하여
 		dao.deleteAll();
 		assertThat(dao.getCount(),is(0));
-		
+		System.out.println("0개인지 확인");
 		
 		
 		dao.add(user);
@@ -119,6 +122,7 @@ public class UserDaoTest {
 	public void count()throws SQLException,ClassNotFoundException{
 		dao.deleteAll();
 		assertThat(dao.getCount(),is(0));
+		System.out.println("0개인지 확인");
 		
 		
 		dao.add(user);
@@ -143,8 +147,8 @@ public class UserDaoTest {
 		//xml파일 설정해서 루트를 지정하여
 		dao.deleteAll();
 		assertThat(dao.getCount(),is(0));
-		
-		
+		System.out.println("0개인지 확인");
+
 		dao.add(user);
 		assertThat(dao.getCount(),is(1));
 		assertThat(user.getName(),is(user.getName()));
@@ -171,7 +175,40 @@ public class UserDaoTest {
 		//CountingConnectionMaker ccm= context.getBean("dataSource",CountingConnectionMaker.class);
 		//System.out.println("Connection counter : " + ccm.get());
 	}
-	
+
+	@Test
+	public void getAll()throws SQLException,ClassNotFoundException{
+		dao.deleteAll();
+
+
+		dao.add(user);
+		List<User> users= dao.getAll();
+		assertThat(users.size(), is(1));
+		checkSameUser(user,users.get(0));
+
+		dao.add(user1);
+		List<User> users1= dao.getAll();
+		assertThat(users1.size(),is(2));
+		checkSameUser(user1,users1.get(0));
+
+
+
+		dao.add(user2);
+		List<User> users2 = dao.getAll();
+		assertThat(users2.size(),is(3));
+		checkSameUser(user2,users2.get(0));
+
+
+	}
+
+
+	private void checkSameUser(User user1, User user2){
+		assertThat(user1.getId(),is(user2.getId()));
+		assertThat(user1.getName(),is(user2.getName()));
+		assertThat(user1.getPassword(),is(user2.getPassword()));
+
+	}
+
 	public static void main(String args[]) {
 		JUnitCore.main("spring.user.dao.UserDaoTest");
 	}

@@ -9,9 +9,9 @@ public class CountingDaoFactory {
 	//DaoFactory에서 UserDao를 쓰기 위한 메소드를 만든다.
 	@Bean
 	public DataSource dataSource() {
-		
+
 		SimpleDriverDataSource dataSource =new SimpleDriverDataSource();
-		
+
 		dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
 		dataSource.setUrl("jdbc:mysql://localhost:3036/my_database?serverTimezone=Asia/Seoul");
 		dataSource.setUsername("root");
