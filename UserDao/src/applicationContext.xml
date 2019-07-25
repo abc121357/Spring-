@@ -12,7 +12,7 @@
 			<property name="password" value="gkswn1"/>
 			</bean>
 			<!-- UserDao클래스에 있는 userDao객체를 dataSource수정자로 가져온다. -->
-			<bean id="userDao" class="spring.user.dao.UserDao">
+			<bean id="userDao" class="spring.user.dao.UserDaoImpl">
 			<property name="dataSource" ref="dataSource"/>
 			
 			</bean>

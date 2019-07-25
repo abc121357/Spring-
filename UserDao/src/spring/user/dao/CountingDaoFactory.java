@@ -17,13 +17,13 @@ public class CountingDaoFactory {
 		dataSource.setUsername("root");
 		dataSource.setPassword("gkswn1");
 		return dataSource;
-	}
+	}/*
 	@Bean
 	public UserDao userDao() {
-		UserDao userDao=new UserDao();
+		UserDao userDao=new UserDaoImpl();
 		userDao.setDataSource(dataSource());
 	return userDao;
-	}
+	}*/
 	//userDao의 역할을 분할해서 설정한다.
 	@Bean
 	public ConnectionMaker connectionMaker() {

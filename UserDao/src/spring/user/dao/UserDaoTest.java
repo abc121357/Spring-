@@ -13,10 +13,16 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import springbook.user.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
 
 //스프
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,6 +34,8 @@ public class UserDaoTest {
 	private User user1;
 	private User user2;
 	private User user3;
+	@Autowired
+	DataSource dataSource;
 	/*public void main2() throws ClassNotFoundException, SQLException{
 		//메인에서 ConnectionMaker 객체를 만들어서 UserDao에 넘겨준다.
 		//생성자에서 ConnectionMaker파라미터를 받을 수 있게 UserDao에서 UserDao자신 멤버변수에 생성자를 실행했다. 그러므로 메인에서 드라이버를 지정가능하다. -1
@@ -200,6 +208,22 @@ public class UserDaoTest {
 
 
 	}
+
+	@Test
+	public void sqlExceptionTranslate(){
+		dao.deleteAll();
+
+		try{
+			dao.add(user1);
+			dao.add(user1);
+		}catch(DuplicateKeyException ex){
+			SQLException sqlEx=(SQLException)ex.getRootCause();
+			SQLExceptionTranslator set = // 코드를 이용한 SQLException의 전환
+					new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+
+		}
+	}
+
 
 
 	private void checkSameUser(User user1, User user2){
