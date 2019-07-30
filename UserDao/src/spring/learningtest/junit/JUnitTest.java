@@ -4,8 +4,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
-import springbook.user.domain.User;
-
 import org.junit.Test;
 
 

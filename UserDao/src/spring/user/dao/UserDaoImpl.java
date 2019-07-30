@@ -6,17 +6,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import springbook.user.domain.User;
+import spring.user.domain.Level;
+import spring.user.domain.User;
 import javax.sql.DataSource;
 public class UserDaoImpl implements UserDao {
     //드라이버 연결 멤버변수를 만든다.
@@ -32,6 +29,9 @@ public class UserDaoImpl implements UserDao {
                     user.setId(rs.getString("id"));
                     user.setName(rs.getString("name"));
                     user.setPassword(rs.getString("password"));
+                    user.setLevel((Level.valueOf(rs.getInt("Level"))));
+                    user.setLogin(rs.getInt("login"));
+                    user.setRecommend(rs.getInt("recommend"));
                     return user;
                 }
             };
@@ -99,10 +99,13 @@ public class UserDaoImpl implements UserDao {
 		});*/
 
             //Spring 템플릿으로 짧게 만든 함수
-            this.jdbcTemplate.update("INSERT INTO USERS VALUES(?,?,?)"
+            this.jdbcTemplate.update("INSERT INTO USERS VALUES(?,?,?,?,?,?)"
                     , user.getId()
                     , user.getName()
-                    , user.getPassword());
+                    , user.getPassword()
+                    , user.getLevel().intValue()
+                    , user.getLogin()
+                    , user.getRecommend());
 
             System.out.println("커넥션,쿼리 닫기완료");
             //preparedStatement클래스 객체인 ps에 user id,name,password정보를 입력한다.
@@ -286,6 +289,13 @@ public class UserDaoImpl implements UserDao {
 
         return this.jdbcTemplate.query("select * from users order by id",
                 this.userMapper);
+    }
+
+
+    public void update(User user){
+
+        this.jdbcTemplate.update("update users set name = ?, password=?, level=?,login= ?,recommend = ? where id=?",
+                user.getName(),user.getPassword(),user.getLevel().intValue(),user.getLogin(),user.getRecommend(),user.getId());
     }
 
     //같은 내용을 하나로 합쳐서 코드를 줄이기 위한 방법이다.

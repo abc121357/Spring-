@@ -19,4 +19,9 @@
 			<bean id="jdbcContext" class="spring.user.dao.JdbcContext">
 			<property name="dataSource" ref="dataSource"/>
 			</bean>
-			</beans>
+			<bean id="userService" class="spring.user.service.UserService">
+			<property name="userDao" ref="userDao"/>
+
+			</bean>
+
+</beans>

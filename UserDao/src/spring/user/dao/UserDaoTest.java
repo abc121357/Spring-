@@ -1,13 +1,11 @@
 package spring.user.dao;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,7 +15,8 @@ import static org.junit.Assert.assertThat;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
-import springbook.user.domain.User;
+import spring.user.domain.Level;
+import spring.user.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -34,6 +33,7 @@ public class UserDaoTest {
 	private User user1;
 	private User user2;
 	private User user3;
+
 	@Autowired
 	DataSource dataSource;
 	/*public void main2() throws ClassNotFoundException, SQLException{
@@ -82,9 +82,10 @@ public class UserDaoTest {
 	//Before는 테스트코드들의 중복된 내용들을 한번에 모아 실행시키는 코드다.
 	@Before
 	public void setUp() {
-		this.user = new User("white","snow","whiteSnow");
-		this.user1 = new User("winner","looser","king");
-		this.user2 = new User("sagisawa","Fumika","book");
+		this.user = new User("white","snow","whiteSnow", Level.BASIC,1,0);
+		this.user1 = new User("winner","looser","king",Level.SILVER,55,10);
+		this.user2 = new User("sagisawa","Fumika","book",Level.SILVER,100,40);
+
 	}
 	
 	@Test
@@ -114,32 +115,38 @@ public class UserDaoTest {
 		System.out.println(user1.getId()+"등록 성공");
 		System.out.println(user2.getId()+"등록 성공");
 		
-		User user4=dao.get(user2.getId());	
-		System.out.println(user4.getName());
-		System.out.println(user4.getPassword());
-		System.out.println(user4.getId()+"조회 성공");
+		User userget2=dao.get(user2.getId());
+		checkSameUser(userget2, user2);
+
+		System.out.println(userget2.getName());
+		System.out.println(userget2.getPassword());
+		System.out.println(userget2.getId()+"조회 성공");
 		//user2.name이 user4.name과 같지 않다면 테스트 실패를 출력한다.
-		assertThat(user2.getName(),is(user4.getName()));
-		assertThat(user2.getPassword(),is(user4.getPassword()));
+		assertThat(user2.getName(),is(userget2.getName()));
+		assertThat(user2.getPassword(),is(userget2.getPassword()));
 		
 		//CountingConnectionMaker ccm= context.getBean("dataSource",CountingConnectionMaker.class);
 		//System.out.println("Connection counter : " + ccm.get());
 	}
-	
+
 	@Test
 	public void count()throws SQLException,ClassNotFoundException{
 		dao.deleteAll();
 		assertThat(dao.getCount(),is(0));
 		System.out.println("0개인지 확인");
-		
-		
+
+
+
 		dao.add(user);
 		assertThat(dao.getCount(),is(1));
 		assertThat(user.getName(),is(user.getName()));
 		assertThat(user.getPassword(),is(user.getPassword()));
+
+
 		dao.add(user1);
 		assertThat(dao.getCount(),is(2));
 		assertThat(user1.getName(),is(user1.getName()));
+
 		assertThat(user1.getPassword(),is(user1.getPassword()));
 		dao.add(user2);
 		assertThat(dao.getCount(),is(3));
@@ -226,13 +233,46 @@ public class UserDaoTest {
 
 
 
+
+	@Test
+	public void update(){
+		dao.deleteAll();
+
+		dao.add(user1);
+		dao.add(user2);
+
+
+		user1.setName("humika");
+		user1.setPassword("springno6");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(1000);
+		user1.setRecommend(999);
+
+		dao.update(user1);
+		System.out.println(user1.getName());
+		System.out.println(user1.getPassword());
+		System.out.println(user1.getLevel());
+
+		System.out.println(user2.getName());
+		System.out.println(user2.getPassword());
+		System.out.println(user2.getLevel());
+
+		User user1update = dao.get(user1.getId());
+		checkSameUser(user1, user1update);
+		User user2same = dao.get(user2.getId());
+		checkSameUser(user2,user2same);
+	}
+
+
+
 	private void checkSameUser(User user1, User user2){
 		assertThat(user1.getId(),is(user2.getId()));
 		assertThat(user1.getName(),is(user2.getName()));
 		assertThat(user1.getPassword(),is(user2.getPassword()));
+        assertThat(user1.getLevel(),is(user2.getLevel()));
+        assertThat(user1.getRecommend(),is(user2.getRecommend()));
 
 	}
-
 	public static void main(String args[]) {
 		JUnitCore.main("spring.user.dao.UserDaoTest");
 	}
